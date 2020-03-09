@@ -1,0 +1,35 @@
+---
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  simple:
+    format: "$(asctime)s #  %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  default:
+    format: "%(asctime)s %(levelname)-8s # %(name)s:%(funcName)s() #  %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: default
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.RotatingFileHandler
+    filename: eink-weather-display.log
+    level: INFO
+    formatter: default
+    maxBytes: 102400  # 100KB
+    backupCount: 5
+    encoding: utf8
+
+loggers:
+  defaultLogger:
+    level: DEBUG
+    handlers: [console, file]
+
+root:
+  level: DEBUG
+  handlers: [console, file]

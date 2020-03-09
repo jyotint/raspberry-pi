@@ -1,0 +1,7 @@
+# General files
+.git
+.github
+config
+
+# Temporary files
+**/__pycache__

@@ -24,7 +24,7 @@ def setupLogging(
     if value:
         path = value
     if os.path.exists(path):
-        with open(path, 'rt') as f:
+        with open(path, "rt") as f:
             config = yaml.safe_load(f.read())
         logging.config.dictConfig(config)
     else:

@@ -2,17 +2,13 @@
 # -*- coding:utf-8 -*-
 
 import logging
+from shared import constants
 from shared import logger
-from shared import customException
 from shared import iniConfigFile as weatherConfig
-from weather import openWeatherMapApi
+from shared import customException as ce
+from .openWeatherMapApi import Weather as OwmWeatherApi
 
 # Module level variables and code
-CONFIG_DEFAULT_SECTION = "default"
-CONFIG_WEATHER_PROVIDER = "weatherProvider"
-
-WEATHER_PROVIDER_OPENWEATHERMAP = "OpenWeatherMap"
-
 RESPONSE_STATUS = "status"
 RESPONSE_DATA = "data"
 RESPONSE_ERROR = "error"
@@ -22,32 +18,32 @@ RESPONSE_ERROR = "error"
 def init(configFile):
     global __weather
     weatherConfig.init(configFile)
-    createWeatherProvider(weatherConfig)
+    __createWeatherProvider(weatherConfig)
 
-def createWeatherProvider(weatherConfig):
+def __createWeatherProvider(weatherConfig):
     global __weather
     weatherProviderName = None
 
-    defaultSection = weatherConfig.getSection(CONFIG_DEFAULT_SECTION)
+    defaultSection = weatherConfig.getSection(constants.CONFIG_DEFAULT)
     if(defaultSection != None):
-        weatherProviderName = weatherConfig.getValueBySectionAndKey(defaultSection, CONFIG_WEATHER_PROVIDER)
+        weatherProviderName = weatherConfig.getValueBySectionAndKey(defaultSection, constants.CONFIG_DEFAULT_WEATHER_PROVIDER)
     if(weatherProviderName == None):
-        raise customException.MissingConfigurationException(missingConfig=CONFIG_WEATHER_PROVIDER)
+        raise ce.MissingConfigurationException(missingConfig=constants.CONFIG_DEFAULT_WEATHER_PROVIDER)
 
     weatherProviderSection = weatherConfig.getSection(weatherProviderName)
     if(weatherProviderSection == None):
-        raise customException.MissingConfigurationException(missingConfig=WEATHER_PROVIDER_OPENWEATHERMAP)
+        raise ce.MissingConfigurationException(missingConfig=constants.CONFIG_OWM)
     else:
-        if(weatherProviderName == WEATHER_PROVIDER_OPENWEATHERMAP):
-            __weather = openWeatherMapApi.Weather()
+        if(weatherProviderName == constants.CONFIG_OWM):
+            __weather = OwmWeatherApi()
             __weather.readConfig(weatherProviderSection)
         else:
-            raise customException.MissingConfigurationException(missingConfig=weatherProviderName)
+            raise ce.MissingConfigurationException(missingConfig=weatherProviderName)
 
 def queryWeather():
     try:
         if(__weather == None):
-            raise customException.NotInitializedException(message="Initialize WeatherApi prior to using it!")
+            raise ce.NotInitializedException(message="Initialize WeatherApi prior to using it!")
 
         result = __weather.queryWeather()
         if(result == True):

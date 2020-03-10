@@ -18,9 +18,15 @@ def getSection(sectionName):
 def getValueBySectionAndKey(section, key):
     return section.get(key)
 
+def getValueBySectionAndKeyDefValue(section, key, defaultValue):
+    value = getValueBySectionAndKey(section, key)
+    return value if value != None else defaultValue
+
+
 def getValueBySectionNameAndKey(sectionName, key):
     section = getSection(sectionName)
-    if(section == None):
-        return None
-    else:
-        return getValueBySectionAndKey(section, key)
+    return None if section == None else getValueBySectionAndKey(section, key)
+
+def getValueBySectionNameAndKeyDefValue(sectionName, key, defaultValue):
+    value = getValueBySectionNameAndKey(sectionName, key)
+    return value if value != None else defaultValue

@@ -3,19 +3,11 @@
 
 import json
 import requests
-from shared import customException
-from . import WeatherData
+from shared import constants
+from shared import customException as ce
+from .weatherData import WeatherData
 
 # API Key from https://home.openweathermap.org/api_keys: eink-weather-display
-CONFIG_API_URL = "apiUrl"
-CONFIG_API_TOKEN = "apiToken"
-CONFIG_LOCATION_CODE = "locationCode"
-CONFIG_UNIT = "unit"
-CONFIG_LANGUAGE = "language"
-
-DEFAULT_LOCATION_CODE = 1277333 # Bengaluru
-DEFAULT_UNIT = "metric"
-DEFAULT_LANGUAGE = "en"
 
 class Weather(object):
     def __init__(self):
@@ -30,11 +22,11 @@ class Weather(object):
     def readConfig(self, configDictionary):
         self.configName = configDictionary.name
 
-        self.apiUrl = configDictionary.get(CONFIG_API_URL)
-        self.apiToken = configDictionary.get(CONFIG_API_TOKEN)
-        self.locationCode = configDictionary.get(CONFIG_LOCATION_CODE, DEFAULT_LOCATION_CODE)
-        self.measurementUnit = configDictionary.get(CONFIG_UNIT, DEFAULT_UNIT)
-        self.language = configDictionary.get(CONFIG_LANGUAGE, DEFAULT_LANGUAGE)
+        self.apiUrl = configDictionary.get(constants.CONFIG_OWM_API_URL)
+        self.apiToken = configDictionary.get(constants.CONFIG_OWM_API_TOKEN)
+        self.locationCode = configDictionary.get(constants.CONFIG_OWM_LOCATION_CODE, constants.DEFAULT_OWM_LOCATION_CODE)
+        self.measurementUnit = configDictionary.get(constants.CONFIG_OWM_UNIT, constants.DEFAULT_OWM_UNIT)
+        self.language = configDictionary.get(constants.CONFIG_OWM_LANGUAGE, constants.DEFAULT_OWM_LANGUAGE)
         self.locationName = ""
         self.weatherJson = ""
         self.weatherData = None
@@ -44,18 +36,18 @@ class Weather(object):
 
     def validateParams(self):
         if(self.apiUrl == None):
-            raise customException.MissingConfigurationException(missingConfig=self.getConfigKeyName(CONFIG_API_URL))
+            raise ce.MissingConfigurationException(missingConfig=self.getConfigKeyName(constants.CONFIG_OWM_API_URL))
         if(self.apiToken == None):
-            raise customException.MissingConfigurationException(missingConfig=self.getConfigKeyName(CONFIG_API_TOKEN))
+            raise ce.MissingConfigurationException(missingConfig=self.getConfigKeyName(constants.CONFIG_OWM_API_TOKEN))
         if(self.locationCode == None):
-            raise customException.MissingConfigurationException(missingConfig=self.getConfigKeyName(CONFIG_LOCATION_CODE))
+            raise ce.MissingConfigurationException(missingConfig=self.getConfigKeyName(constants.CONFIG_OWM_LOCATION_CODE))
 
     def getConfigKeyName(self, key):
         return "{0}::{1}".format(self.configName, key)
 
     def queryWeather(self):
         if(self.initialized == False):
-            raise customException.NotInitializedException(message="Initialize OpenWatherMapApi prior to using it!")
+            raise ce.NotInitializedException(message="Initialize OpenWatherMapApi prior to using it!")
 
         api_headers = {
             "Content-Type": "application/json"
@@ -71,7 +63,7 @@ class Weather(object):
         if(rawResponse.status_code != requests.codes.ok):
             # This means something went wrong.
             errorData = rawResponse.json()
-            raise customException.ApiException(
+            raise ce.ApiException(
                 rawResponse.status_code,
                 "GET: {0}".format(errorData["message"]))
         else:
@@ -84,7 +76,7 @@ class Weather(object):
             return True
 
     def decodeWeatherData(self, locationCode, unit, language, weatherJson):
-        weatherData = WeatherData.WeatherData()
+        weatherData = WeatherData()
         weatherData.setUnitType(unit)
 
         weatherData.locationCode = weatherJson["id"]

@@ -18,10 +18,14 @@ Displays weather data for preconfigured location. Updates are predefined interva
 
 * pyyaml
 * coloredlogs
+* pywapi (Python wrapper around the Yahoo! Weather, Weather.com, and National Oceanic and Atmospheric Administration (NOAA) APIs)
 
 #### Added feature list
 
 1. Git Branch: "feature/001-basic-application-structure"
-    1. Created basic application structure
+    1. Created a basic application structure
     2. Added Waveshare display python libraries
     3. Added logging configuration (logging.yaml) and logging support
+2. Git Branch: "feature/002-added-weather-api"
+    1. Added framework and INI configuration file for weather providers
+    2. Integrated with [OpenWeatherMap](https://openweathermap.org/api) API

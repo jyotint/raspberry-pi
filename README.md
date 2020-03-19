@@ -1,6 +1,7 @@
 # Raspberry Pi Project(s)
 
 All projects related/using to Raspberry Pi. Application is written using Python v3.
+
 Status: In Development.
 
 **Technologies Used:** Python v3.7.4
